@@ -45,7 +45,7 @@ orderingToSign LT = Positive
 --
 -- all number are Enum'erable, meaning that you can move to
 -- next element
-class (Eq a, Ord a, Prelude.Num a, Enum a, Additive a, Subtractive a, Difference a ~ a, Multiplicative a, Divisible a) => Number a where
+class (Eq a, Ord a, Prelude.Real a, Enum a, Additive a, Subtractive a, Difference a ~ a, Multiplicative a, Divisible a) => Number a where
     {-# MINIMAL toInteger #-}
     --fromInteger  :: Integer -> a
     toInteger    :: a -> Integer
@@ -125,6 +125,66 @@ class Multiplicative a => Divisible a where
     mod a b = snd $ divMod a b
     divMod :: a -> a -> (a, a)
     divMod a b = (div a b, mod a b)
+
+data Precision a = Variable | Fixed Int
+
+class Approximate a where
+    precision :: Precision a
+    toApproximate :: Number n => n -> a
+    (/) :: a -> a -> a
+
+instance Approximate Prelude.Float where
+    precision = Variable
+    toApproximate = Prelude.fromRational . Prelude.toRational
+    (/) = (Prelude./)
+instance Approximate Prelude.Double where
+    precision = Variable
+    toApproximate = Prelude.fromRational . Prelude.toRational
+    (/) = (Prelude./)
+instance Approximate Integer where
+    precision = Fixed 0
+    toApproximate = Prelude.round . Prelude.toRational
+    (/) = div
+instance Approximate Int where
+    precision = Fixed 0
+    toApproximate = Prelude.round . Prelude.toRational
+    (/) = div
+instance Approximate Int8 where
+    precision = Fixed 0
+    toApproximate = Prelude.round . Prelude.toRational
+    (/) = div
+instance Approximate Int16 where
+    precision = Fixed 0
+    toApproximate = Prelude.round . Prelude.toRational
+    (/) = div
+instance Approximate Int32 where
+    precision = Fixed 0
+    toApproximate = Prelude.round . Prelude.toRational
+    (/) = div
+instance Approximate Int64 where
+    precision = Fixed 0
+    toApproximate = Prelude.round . Prelude.toRational
+    (/) = div
+instance Approximate Word where
+    precision = Fixed 0
+    toApproximate = Prelude.round . Prelude.toRational
+    (/) = div
+instance Approximate Word8 where
+    precision = Fixed 0
+    toApproximate = Prelude.round . Prelude.toRational
+    (/) = div
+instance Approximate Word16 where
+    precision = Fixed 0
+    toApproximate = Prelude.round . Prelude.toRational
+    (/) = div
+instance Approximate Word32 where
+    precision = Fixed 0
+    toApproximate = Prelude.round . Prelude.toRational
+    (/) = div
+instance Approximate Word64 where
+    precision = Fixed 0
+    toApproximate = Prelude.round . Prelude.toRational
+    (/) = div
 
 instance Number Integer where
     toInteger i = i
